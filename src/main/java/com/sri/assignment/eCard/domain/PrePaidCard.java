@@ -9,23 +9,44 @@ import java.util.Date;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/*
+ * Domain object to represent PrePaid Card, a variant of a ICard.
+ */
 public class PrePaidCard implements ICard {
 
-    static Logger logger = LogManager.getLogger(PrePaidCard.class);
-    ReadWriteLock lock = new ReentrantReadWriteLock();
+    // used to serialize
     private long serialVersionUID = 123L;
+
+    private Logger logger = LogManager.getLogger(PrePaidCard.class);
+
+    // ReadWriteLock to handle the load, spend & balance actions on the card
+    // This is to ensure the value is displayed consistently to all the threads
+    private ReadWriteLock lock;
+
     private int id;
     private long number;
     private Date validFrom;
     private Date validTo;
     private String nameOnCard;
     private int cvv;
-    private double balance;
+    private volatile double balance;
 
+    /*
+     * Default Constructor
+     */
     public PrePaidCard() {
+        // create an instance of ReentrantReadWriteLock
+        lock = new ReentrantReadWriteLock();
     }
 
+    /*
+     * Constructor to create instance of PrePaidCard
+     * This is the only way to create the card at the minute.
+     *
+     * We can replace this with Factory/Builders/JPA to create instances of this card.
+     */
     public PrePaidCard(int id, long number, Date validFrom, Date validTo, String nameOnCard, int cvv, double balance) {
+        this();
         this.id = id;
         this.number = number;
         this.validFrom = validFrom;
@@ -40,6 +61,11 @@ public class PrePaidCard implements ICard {
         logger.info("inside afterPropertiesSet()...");
     }
 
+    /*
+     * Method to print balance on the card.
+     *
+     * Gets a readLock on the balance variable.
+     */
     @Override
     public Double balance() {
         lock.readLock().lock();
@@ -51,10 +77,20 @@ public class PrePaidCard implements ICard {
         }
     }
 
+    /*
+     * Method to load amount on the card.
+     *
+     * Gets a writeLock on the balance variable.
+     *
+     * @param Double amount: amount to be added to card
+     *
+     * @return instance of ICard
+     */
     @Override
     public ICard load(Double amount) {
         lock.writeLock().lock();
         try {
+            logger.info("adding " + amount + " to " + this.balance);
             this.balance += amount;
         } finally {
             lock.writeLock().unlock();
@@ -62,10 +98,20 @@ public class PrePaidCard implements ICard {
         return this;
     }
 
+    /*
+     * Method to spend amount on the card.
+     *
+     * Gets a writeLock on the balance variable.
+     *
+     * @param Double amount: amount to be added to be spent
+     *
+     * @return instance of ICard
+     */
     @Override
     public ICard spend(Double amount) throws CardException {
         lock.writeLock().lock();
         try {
+            logger.info("spending " + amount + " from " + this.balance);
             if (amount > this.balance)
                 this.balance -= amount;
             else
@@ -76,42 +122,17 @@ public class PrePaidCard implements ICard {
         return this;
     }
 
+    /*
+     * Getter for id of the card
+     */
+    @Override
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public long getNumber() {
-        return number;
-    }
-
-    public void setNumber(long number) {
-        this.number = number;
-    }
-
-    public Date getValidFrom() {
-        return validFrom;
-    }
-
-    public Date getValidTo() {
-        return validTo;
-    }
-
-    public String getNameOnCard() {
-        return nameOnCard;
-    }
-
-    public Integer getCvv() {
-        return cvv;
-    }
-
-    public Double getBalance() {
-        return balance();
-    }
-
+    /*
+     * toString() implementation
+     */
     @Override
     public String toString() {
         return "PrePaidCard{" +
@@ -125,4 +146,17 @@ public class PrePaidCard implements ICard {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return id==((ICard)obj).getId();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    protected void finalize() throws Throwable {
+        super.finalize();
+        lock.readLock().unlock();
+        lock.writeLock().unlock();
+        lock = null;
+    }
 }

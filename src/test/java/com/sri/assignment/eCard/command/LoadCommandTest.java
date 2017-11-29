@@ -1,45 +1,35 @@
 package com.sri.assignment.eCard.command;
 
-import org.junit.Test; 
-import org.junit.Before; 
-import org.junit.After; 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/** 
-* LoadCommand Tester. 
-* 
-* @author <Authors name> 
-* @since <pre>Nov 29, 2017</pre> 
-* @version 1.0 
-*/ 
-public class LoadCommandTest { 
+/**
+ * LoadCommand Tester.
+ *
+ * @author Sri Yalamanchili
+ */
+public class LoadCommandTest {
 
-@Before
-public void before() throws Exception { 
-} 
+    @Before
+    public void before() throws Exception {
+    }
 
-@After
-public void after() throws Exception { 
-} 
+    @After
+    public void after() throws Exception {
+    }
 
-/** 
-* 
-* Method: execute(Double amount) 
-* 
-*/ 
-@Test
-public void testExecute() throws Exception { 
-//TODO: Test goes here... 
-} 
+    /**
+     * Method: execute(Double amount)
+     */
+    @Test
+    public void testExecute() throws Exception {
+    }
 
-/** 
-* 
-* Method: afterPropertiesSet() 
-* 
-*/ 
-@Test
-public void testAfterPropertiesSet() throws Exception { 
-//TODO: Test goes here... 
-} 
-
-
-} 
+    /**
+     * Method: afterPropertiesSet()
+     */
+    @Test
+    public void testAfterPropertiesSet() throws Exception {
+    }
+}

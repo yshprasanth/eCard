@@ -17,14 +17,12 @@ public class ECardApplicationTests {
     @Autowired
     CardController cardController;
 
-
     @Autowired
     @Qualifier("card1")
     private ICard card;
 
     @Test
     public void contextLoads() throws CardException {
-        cardController.execute(card, 101D, CardController.ActionType.LOAD);
+        cardController.execute(card, 101D, CardController.Command.LOAD);
     }
-
 }

@@ -9,20 +9,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+/*
+ * Entry/Controller class to handle the operations
+ * on Cards.
+ */
 @Component
 public class CardController {
 
     private Logger logger = LogManager.getLogger(CardController.class);
 
+    // Get a handle to the loadCommand
     @Autowired
     @Qualifier("loadCommand")
     private ICardCommand loadCommand;
 
+    // Get a handle to the spendCommand
     @Autowired
     @Qualifier("spendCommand")
     private ICardCommand spendCommand;
 
-    public void execute(ICard card,  Double amount, ActionType type) throws CardException {
+    /*
+     * Identify the command/action type and perform/invoke the implementation.
+     * @param ICard card: instance of the card
+     * @param Double amount: The money to be loaded/spent
+     * @param ActionType type: indicates the command
+     *
+     * @throws CardException
+     */
+    public void execute(ICard card, Double amount, Command type) throws CardException {
         logger.info("inside execute().." + type + ", " + amount);
         switch (type) {
             case LOAD:
@@ -36,7 +50,7 @@ public class CardController {
         }
     }
 
-    public enum ActionType {
+    public enum Command {
         LOAD, SPEND
     }
 }

@@ -4,45 +4,36 @@ import com.sri.assignment.eCard.domain.PrePaidCard;
 import com.sri.assignment.eCard.domain.base.ICard;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
+/*
+ * ECard Spring Boot Application
+ */
 @SpringBootApplication
 public class ECardApplication {
 
     private static Logger logger = LogManager.getLogger(ECardApplication.class);
 
+    /*
+     * Main method where the beans are loaded and the execution starts
+     */
     public static void main(String[] args) {
-
         SpringApplication.run(ECardApplication.class, args);
-
-        logger.info("starting..");
+        logger.info("started ECardApplication..");
     }
 
-    @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-        return args -> {
-
-            logger.info("Beans:");
-
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-            for (String beanName : beanNames) {
-                logger.info(beanName);
-            }
-
-        };
-    }
-
+    /*
+     * Creates an instance of prePaidCard for the purpose of testing this app.
+     * Ideally, these instances will be generated from the
+     * database using JPA/Hibernate/SpringData etc
+     */
     @Bean("card1")
     public ICard prePaidCard() throws ParseException {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yy");
