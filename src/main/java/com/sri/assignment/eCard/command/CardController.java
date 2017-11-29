@@ -1,6 +1,7 @@
 package com.sri.assignment.eCard.command;
 
 import com.sri.assignment.eCard.command.base.ICardCommand;
+import com.sri.assignment.eCard.domain.base.ICard;
 import com.sri.assignment.eCard.exceptions.CardException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -21,14 +22,14 @@ public class CardController {
     @Qualifier("spendCommand")
     private ICardCommand spendCommand;
 
-    public void execute(Double amount, ActionType type) throws CardException {
+    public void execute(ICard card,  Double amount, ActionType type) throws CardException {
         logger.info("inside execute().." + type + ", " + amount);
         switch (type) {
             case LOAD:
-                loadCommand.execute(amount);
+                loadCommand.execute(card, amount);
                 break;
             case SPEND:
-                spendCommand.execute(amount);
+                spendCommand.execute(card, amount);
                 break;
             default:
                 logger.warn("Not a valid action type: " + type);

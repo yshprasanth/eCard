@@ -26,14 +26,10 @@ public class SpendCommand implements ICardCommand {
     @Value("${spend.thread.sleepTime}")
     private int threadSleepTime;
 
-    @Autowired
-    @Qualifier("prePaidCard")
-    private ICard card;
-
     private ThreadPoolExecutor executor;
 
     @Override
-    public void execute(Double amount) throws CardException {
+    public void execute(ICard card, Double amount) throws CardException {
         logger.info("inside execute: " + amount);
         Callable<ICard> task = () -> {
             try {
@@ -72,11 +68,5 @@ public class SpendCommand implements ICardCommand {
         this.threadPoolSize = threadPoolSize;
     }
 
-    public ICard getCard() {
-        return card;
-    }
 
-    public void setCard(ICard card) {
-        this.card = card;
-    }
 }
