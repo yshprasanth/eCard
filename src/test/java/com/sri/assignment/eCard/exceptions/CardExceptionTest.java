@@ -2,7 +2,6 @@ package com.sri.assignment.eCard.exceptions;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * CardException Tester.

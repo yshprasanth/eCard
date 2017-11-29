@@ -1,73 +1,56 @@
 package com.sri.assignment.eCard.command;
 
+import com.sri.assignment.eCard.builder.CardFixtureBuilder;
+import com.sri.assignment.eCard.command.base.ICardCommand;
+import com.sri.assignment.eCard.domain.base.ICard;
+import com.sri.assignment.eCard.exceptions.CardException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * SpendCommand Tester.
  *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>Nov 29, 2017</pre>
+ * @author Sri Yalamanchili
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SpendCommandTest {
+
+    @Autowired
+    @Qualifier("spendCommand")
+    ICardCommand spendCommandToTest;
+
+    private ICard prePaidCardToTest;
 
     @Before
     public void before() throws Exception {
+        prePaidCardToTest = CardFixtureBuilder.buildPrePaidCard();
     }
 
     @After
     public void after() throws Exception {
+        prePaidCardToTest = null;
     }
 
     /**
-     * Method: execute(Double amount)
+     * Method: execute(ICard card, Double amount)
      */
-    @Test
+    @Test(expected = CardException.class)
     public void testExecute() throws Exception {
-//TODO: Test goes here... 
+        assertEquals("Balance on the card does not match", 100d, prePaidCardToTest.balance().doubleValue(), 0.0);
+
+        spendCommandToTest.execute(prePaidCardToTest, 40d);
+        assertEquals("Balance on the card does not match", 60d, prePaidCardToTest.balance().doubleValue(), 0.0);
+
+        // The below command should throw an exception
+        spendCommandToTest.execute(prePaidCardToTest, 60.01);
     }
-
-    /**
-     * Method: afterPropertiesSet()
-     */
-    @Test
-    public void testAfterPropertiesSet() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: getThreadPoolSize()
-     */
-    @Test
-    public void testGetThreadPoolSize() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: setThreadPoolSize(int threadPoolSize)
-     */
-    @Test
-    public void testSetThreadPoolSize() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: getCard()
-     */
-    @Test
-    public void testGetCard() throws Exception {
-//TODO: Test goes here... 
-    }
-
-    /**
-     * Method: setCard(ICard card)
-     */
-    @Test
-    public void testSetCard() throws Exception {
-//TODO: Test goes here... 
-    }
-
-
-} 
+}

@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /*
  * Implementation to handle Spend Command, i.e., spend money on card
@@ -51,8 +48,8 @@ public class SpendCommand implements ICardCommand {
             } catch (CardException e) {
                 logger.info("Exception while running the spend task: " + e.toString());
                 e.printStackTrace();
+                throw e;
             }
-            return card;
         };
 
         // submit the task
@@ -67,6 +64,17 @@ public class SpendCommand implements ICardCommand {
             }
         }
 
+        // Following block is to catch and rethrow the CardException, in case
+        // the underlying Callable interface threw an exception.
+        try {
+            result.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            logger.info("Caught ExecutionException: " + e.getMessage());
+            throw (CardException) e.getCause();
+        }
+
         // print card balance
         card.balance();
     }
@@ -76,10 +84,6 @@ public class SpendCommand implements ICardCommand {
         logger.info("creating ThreadPoolExecutor: " + threadPoolSize);
         // create instance of ThreadPoolExecutor using the value from properties file
         executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
-    }
-
-    public int getThreadPoolSize() {
-        return threadPoolSize;
     }
 
     public void setThreadPoolSize(int threadPoolSize) {

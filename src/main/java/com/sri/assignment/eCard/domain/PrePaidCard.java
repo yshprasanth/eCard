@@ -29,7 +29,7 @@ public class PrePaidCard implements ICard {
     private Date validTo;
     private String nameOnCard;
     private int cvv;
-    private volatile double balance;
+    private Double balance;
 
     /*
      * Default Constructor
@@ -112,10 +112,10 @@ public class PrePaidCard implements ICard {
         lock.writeLock().lock();
         try {
             logger.info("spending " + amount + " from " + this.balance);
-            if (amount > this.balance)
+            if (amount < this.balance)
                 this.balance -= amount;
             else
-                throw new CardException("Not enough funds for the transaction !!");
+                throw new CardException("Not enough funds for the transaction.");
         } finally {
             lock.writeLock().unlock();
         }
@@ -148,7 +148,7 @@ public class PrePaidCard implements ICard {
 
     @Override
     public boolean equals(Object obj) {
-        return id==((ICard)obj).getId();
+        return id == ((ICard) obj).getId();
     }
 
     @Override

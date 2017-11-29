@@ -30,7 +30,7 @@ public class LoadCommand implements ICardCommand {
         try {
             // call load method on card
             card.load(amount)
-                .balance();
+                    .balance();
         } catch (Exception e) {
             logger.error("Exception while loading balance into the card..");
             throw new CardException(e.toString());
